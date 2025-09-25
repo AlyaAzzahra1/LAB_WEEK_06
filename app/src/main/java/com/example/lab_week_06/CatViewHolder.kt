@@ -15,11 +15,11 @@ private val MALE_SYMBOL = "\u2642"
 private const val UNKNOWN_SYMBOL = "?"
 
 class CatViewHolder(
-    containerView: View,
-    private val imageLoader: ImageLoader
+    private val containerView: View,
+    private val imageLoader: ImageLoader,
+    private val onClickListener: CatAdapter.OnClickListener
 ) : RecyclerView.ViewHolder(containerView) {
 
-    // containerView is the container layout of each item list
     // findViewById digunakan untuk mendapatkan reference view di dalam layout
     private val catBiographyView: TextView by lazy {
         containerView.findViewById(R.id.cat_biography)
@@ -37,8 +37,12 @@ class CatViewHolder(
         containerView.findViewById(R.id.cat_photo)
     }
 
-    // Function untuk bind data ke layout
+    // Function untuk bind data ke layout + pasang click listener
     fun bindData(cat: CatModel) {
+        containerView.setOnClickListener {
+            onClickListener.onItemClick(cat)
+        }
+
         imageLoader.loadImage(cat.imageUrl, catPhotoView)
         catNameView.text = cat.name
         catBreedView.text = when (cat.breed) {
@@ -53,5 +57,10 @@ class CatViewHolder(
             Gender.Male -> MALE_SYMBOL
             else -> UNKNOWN_SYMBOL
         }
+    }
+
+    // Interface yang akan dipanggil oleh MainActivity via Adapter
+    interface OnClickListener {
+        fun onItemClick(cat: CatModel)
     }
 }
